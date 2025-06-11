@@ -1,0 +1,6 @@
+bench/*/*.wts filter=lfs diff=lfs merge=lfs -text
+bench/*/*.nodes filter=lfs diff=lfs merge=lfs -text
+bench/*/*.nets filter=lfs diff=lfs merge=lfs -text
+bench/*/*.aux filter=lfs diff=lfs merge=lfs -text
+bench/*/*.pl filter=lfs diff=lfs merge=lfs -text
+bench/*/*.scl filter=lfs diff=lfs merge=lfs -text
