@@ -8,23 +8,23 @@ class Net:
         """
         self.name = name
         self.degree = 0
-        self.in_nodes: list[Macro] = []
-        self.out_nodes: list[Macro] = []
-        self.external_nodes: list[Macro] = []
+        self.in_nodes: list[tuple[Macro, int]] = []
+        self.out_nodes: list[tuple[Macro, int]] = []
+        self.external_nodes: list[tuple[Macro, int]] = []
 
-    def add_in_macro(self, macro: Macro):
+    def add_in_macro(self, macro: Macro, idx: int):
         """Add an input port to the net."""
-        self.in_nodes.append(macro)
+        self.in_nodes.append((macro, idx))
         self.degree += 1
     
-    def add_out_macro(self, macro: Macro):
+    def add_out_macro(self, macro: Macro, idx: int):
         """Add an output port to the net."""
-        self.out_nodes.append(macro)
+        self.out_nodes.append((macro, idx))
         self.degree += 1
 
-    def add_external_macro(self, macro: Macro):
+    def add_external_macro(self, macro: Macro, idx: int):
         """Add an external port to the net."""
-        self.external_nodes.append(macro)
+        self.external_nodes.append((macro, idx))
         self.degree += 1
     
     def get_in_macro(self) -> list[Macro]:

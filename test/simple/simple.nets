@@ -1,0 +1,13 @@
+UCLA nets 1.0
+# Created	:	Mar 01 2006
+# User   	:	Gi-Joon Nam at IBM Austin Research (gnam@us.ibm.com)
+
+NumNets : 2
+NumPins : 4
+
+NetDegree : 2 n0
+	o0 I : -1.000000 2.000000
+	o1 O : -3.000000 -3.000000
+NetDegree : 2 n1
+	o0 I : 1.000000 2.000000
+	o1 O : 3.000000 -3.000000

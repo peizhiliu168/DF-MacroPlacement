@@ -14,20 +14,23 @@ def parse_nodes(file_path: str) -> dict[str:Macro]:
     
     num_nodes = 0
     num_terminals = 0
+    nodes_flag = False
+    terminals_flag = False
     macros = {}
 
     with open(file_path, 'r') as file:
         for line in file:
             if line.startswith("NumNodes"):
                 num_nodes = int(line.split(":")[1])
+                nodes_flag = True
                 continue
             elif line.startswith("NumTerminals"):
                 num_terminals = int(line.split(":")[1])
+                terminals_flag = True
                 continue
             
-            if not num_nodes or not num_terminals:
+            if not nodes_flag or not terminals_flag:
                 continue
-
 
             macro_info = line.split()
 
@@ -128,14 +131,14 @@ def parse_nets(file_path: str, macros: dict[str, Macro]) -> dict[str, Net]:
             macro: Macro = macros[macro_name]
 
             if port_type == "I":
-                net.add_in_macro(macro)
-                macro.add_in_port(net_name, x_loc, y_loc)
+                idx = macro.add_in_port(net_name, x_loc, y_loc)
+                net.add_in_macro(macro, idx)
             elif port_type == "O":
-                net.add_out_macro(macro)
-                macro.add_out_port(net_name, x_loc, y_loc)
+                idx = macro.add_out_port(net_name, x_loc, y_loc)
+                net.add_out_macro(macro, idx)
             elif port_type == "B":
-                net.add_external_macro(macro)
-                macro.add_external_port(net_name, x_loc, y_loc)
+                idx = macro.add_external_port(net_name, x_loc, y_loc)
+                net.add_external_macro(macro, idx)
             else:
                 raise ValueError(f"Invalid port type '{port_type}' for macro '{macro_name}' in net '{net_name}'.")
 
