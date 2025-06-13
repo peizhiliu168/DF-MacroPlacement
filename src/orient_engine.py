@@ -67,8 +67,28 @@ class OrientEngine():
             return tau_vec
         
         
-        opt_rot_vec = scipy.optimize.newton(f, self.rot_vec)
-        self.rot_vec = opt_rot_vec
+        res = scipy.optimize.fsolve(f, self.rot_vec, xtol=1, maxfev=50, full_output=True)
+        self.rot_vec = res[0]
+    
+    def fix_macro_rotation(self):
+        for idx, angle in enumerate(self.rot_vec):
+            macro_name = self.index2macro[idx]
+            macro: Macro = self.macros[macro_name]
+
+            angle = angle % 360.0
+            # Find the closest angle in [0, 90, 180, 270]
+            if angle < 45:
+                angle = 0
+            elif angle < 135:
+                angle = 90
+            elif angle < 225:
+                angle = 180
+            elif angle < 315:
+                angle = 270
+            else:
+                angle = 0
+                
+            macro.set_rotation(angle)
 
 
 
@@ -77,7 +97,8 @@ if __name__ == "__main__":
     from parser import parse_nodes, parse_pl, parse_nets
 
     # bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/test/simple"
-    bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/adaptec1"
+    # bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/adaptec1"
+    bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/adaptec1_500"
     node_file = None
     pl_file = None
     net_file = None
@@ -94,9 +115,10 @@ if __name__ == "__main__":
         exit(1)
     
     # Parse the nodes from the .node file
-    print(f"Parsing nodes from {node_file}")
+    # print(f"Parsing nodes from {node_file}")
     macros = parse_nodes(node_file)
-    print(macros)
+    print(f"Parsed {len(macros)} macros from {node_file}")
+    # print(macros)
     
     if not pl_file:
         print(f"No .pl file found in {bench}, skipping placement.")
@@ -111,7 +133,7 @@ if __name__ == "__main__":
     
     # Parse the nets from the .nets file
     nets = parse_nets(net_file, macros)
-    print(nets)
+    # print(nets)
     print(f"Parsed {len(nets)} nets from {net_file}")
 
     # Create the orient engine
