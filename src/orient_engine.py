@@ -20,6 +20,7 @@ class OrientEngine():
         def f(x):
             tau_vec = np.zeros(len(self.macros))
 
+
             # Set the rotation for each macro
             for idx, m_name in self.index2macro.items():
                 macro: Macro = self.macros[m_name]
@@ -29,7 +30,9 @@ class OrientEngine():
                 macro.set_rotation(rot_deg)
 
             # Compute torque balance for each macro
-            for idx, m_name in tqdm(self.index2macro.items(), desc="Computing torque", total=len(self.index2macro)):
+            # for idx, m_name in tqdm(self.index2macro.items(), desc="Computing torque", total=len(self.index2macro)):
+            for idx, m_name in self.index2macro.items():
+
                 macro: Macro = self.macros[m_name]
 
                 tau = np.zeros(3)
@@ -67,12 +70,17 @@ class OrientEngine():
                         
                 tau_vec[idx] = tau[-1]
 
-            print("Torque vector:", tau_vec)
+            # print("Torque vector:", tau_vec)
             return tau_vec
         
         
-        res = scipy.optimize.fsolve(f, self.rot_vec, xtol=1, maxfev=50, full_output=True)
-        self.rot_vec = res[0]
+        # res = scipy.optimize.newton(f, self.rot_vec, full_output=True, tol=10, )
+        try:
+            res = scipy.optimize.broyden2(f, self.rot_vec, iter=200, f_tol=1)
+            self.rot_vec = res
+            print("Optimization result:", res)
+        except Exception as e:
+            print(f"Error during optimization: {e}")
     
     def update_macro_rotation(self):
         for idx, angle in enumerate(self.rot_vec):

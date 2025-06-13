@@ -7,7 +7,7 @@ from parser import parse_nodes, parse_pl, parse_nets
 def get_subset_nets(macros: dict[str, Macro], nets: dict[str, Net]):
     macro_subset = set()
     net_subset = set()
-    max_nets = 500
+    max_nets = 20
     for i, (net_name, net) in enumerate(nets.items()):
         if i >= max_nets:
             break
@@ -56,7 +56,7 @@ def generate_nets_file(nets: list[Net], file_path: str):
                 f.write(f"\t{macro.name} B : {r[0]} {r[1]}\n")
 
 if __name__ == "__main__":
-    bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/adaptec1"
+    bench = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/bigblue4"
     node_file = None
     pl_file = None
     net_file = None
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     macro_list = [macros[name] for name in subset_macros]
     net_list = [nets[name] for name in subset_nets]
 
-    out_dir = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/adaptec1_500"
+    out_dir = "/home/peizhi/Documents/2025_Spring_Classes/DFMP/bench/bigblue4_20"
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     basename = os.path.basename(out_dir)
