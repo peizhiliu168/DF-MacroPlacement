@@ -145,5 +145,21 @@ def parse_nets(file_path: str, macros: dict[str, Macro]) -> dict[str, Net]:
     return nets
 
 
+def parse_scl(file_path: str) -> tuple[float, float]:
+    """
+    Parse the .scl file to extract the dimensions of the layout.
+    :param file_path: Path to the .scl file.
+    :return: Tuple containing the width and height of the layout.
+    """
     
+    if not file_path.endswith(".scl"):
+        raise ValueError(f"Invalid file type: {file_path}. Expected a .scl file.")
     
+    max_width = 0.0
+    with open(file_path, 'r') as file:
+        for line in file:
+            if "NumSites" in line:
+                dimensions = line.split(":")[2].strip().split()
+                max_width = max(max_width, float(dimensions[0]))
+
+    return max_width, max_width    
