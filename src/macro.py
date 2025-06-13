@@ -37,11 +37,12 @@ class Macro:
         self.rotation = rotation
 
 
-    def _add_port(self, ports: dict, net_name: str, x_loc: float, y_loc: float):
+    def _add_port(self, ports: dict, net_name: str, x_loc: float, y_loc: float, port_type: str):
         r = np.array([x_loc, y_loc], dtype=float)
         port_dict = {
             "net": net_name,
-            "r": r
+            "r": r,
+            "type": port_type
         }
         ports[self.port_idx] = port_dict
         self.pos2idx[(x_loc, y_loc)] = self.port_idx
@@ -54,7 +55,7 @@ class Macro:
         if net_name in self.in_ports:
             raise ValueError(f"Input port for net '{net_name}' already exists.")
         
-        return self._add_port(self.in_ports, net_name, x_loc, y_loc)
+        return self._add_port(self.in_ports, net_name, x_loc, y_loc, "I")
 
 
     def add_out_port(self, net_name: str, x_loc: float, y_loc: float):
@@ -62,7 +63,7 @@ class Macro:
         if net_name in self.out_ports:
             raise ValueError(f"Output port for net '{net_name}' already exists.")
         
-        return self._add_port(self.out_ports, net_name, x_loc, y_loc)
+        return self._add_port(self.out_ports, net_name, x_loc, y_loc, "O")
     
 
     def add_external_port(self, net_name: str, x_loc: float, y_loc: float):
@@ -70,7 +71,7 @@ class Macro:
         if net_name in self.external_ports:
             raise ValueError(f"External port for net '{net_name}' already exists.")
         
-        return self._add_port(self.external_ports, net_name, x_loc, y_loc)
+        return self._add_port(self.external_ports, net_name, x_loc, y_loc, "E")
 
 
     def get_position(self) -> np.ndarray:
@@ -81,6 +82,13 @@ class Macro:
     def get_dimensions(self) -> np.ndarray:
         """Get the dimensions of the macro."""
         return self.dim
+    
+    def compute_dimensions(self) -> np.ndarray:
+        """Compute the dimensions of the macro considering rotation."""
+        if self.rotation % 180 == 0:
+            return self.dim
+        else:
+            return np.array([self.dim[1], self.dim[0]], dtype=float)
     
 
     def get_in_ports(self) -> dict[tuple[float, float], str]:
@@ -107,6 +115,20 @@ class Macro:
         else:
             raise ValueError(f"Port index {idx} does not exist in macro '{self.name}'.")
     
+    def get_port_type(self, idx: int) -> str:
+        """
+        Get the type of the port (input, output, or external) based on its index.
+        :param idx: Index of the port.
+        :return: Type of the port as a string.
+        """
+        if idx in self.in_ports:
+            return "I"
+        elif idx in self.out_ports:
+            return "O"
+        elif idx in self.external_ports:
+            return "E"
+        else:
+            raise ValueError(f"Port index {idx} does not exist in macro '{self.name}'.")
 
     def get_port_with_pos(self, pos: tuple[float, float]):
         if pos in self.pos2idx:

@@ -46,7 +46,11 @@ class OrientEngine():
                     macro_loc = macro.compute_port_loc(port_idx)
                     net: Net = self.nets[port["net"]]
 
-                    connected_ports = net.get_in_macro() + net.get_out_macro()
+                    port_type = port["type"]
+                    if port_type == "I":
+                        connected_ports = net.get_out_macro()
+                    elif port_type == "O":
+                        connected_ports = net.get_in_macro()
                     
                     # For each port, all nodes in the net applies some force to the port,
                     # inducing some amount of torque. Only force from other macros is considered.
@@ -70,7 +74,7 @@ class OrientEngine():
         res = scipy.optimize.fsolve(f, self.rot_vec, xtol=1, maxfev=50, full_output=True)
         self.rot_vec = res[0]
     
-    def fix_macro_rotation(self):
+    def update_macro_rotation(self):
         for idx, angle in enumerate(self.rot_vec):
             macro_name = self.index2macro[idx]
             macro: Macro = self.macros[macro_name]
@@ -87,7 +91,7 @@ class OrientEngine():
                 angle = 270
             else:
                 angle = 0
-                
+
             macro.set_rotation(angle)
 
 

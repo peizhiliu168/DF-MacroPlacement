@@ -1,4 +1,5 @@
-from parser import parse_nodes, parse_pl, parse_nets
+from parser import parse_nodes, parse_pl, parse_nets, parse_scl
+from sa_engine import SAEngine
 
 
 def main(bench):
@@ -8,6 +9,7 @@ def main(bench):
     node_file = None
     pl_file = None
     net_file = None
+    scl_file = None
     for file in os.listdir(bench):
         if file.endswith(".nodes"):
             node_file = os.path.join(bench, file)
@@ -15,6 +17,8 @@ def main(bench):
             pl_file = os.path.join(bench, file)
         elif file.endswith(".nets"):
             net_file = os.path.join(bench, file)
+        elif file.endswith(".scl"):
+            scl_file = os.path.join(bench, file)
 
     if not node_file:
         print(f"No .node file found in {bench}")
@@ -38,7 +42,18 @@ def main(bench):
     nets = parse_nets(net_file, macros)
     print(f"Parsed {len(nets)} nets from {net_file}")
 
+    if not scl_file:
+        print(f"No .scl file found: {scl_file}.")
+        return
+    
+    # Parse the scale from the .scl file
+    x_min = y_min = 0.0
+    x_max, y_max = parse_scl(scl_file)
 
+    # Run the simulated annealing engine
+    sa_engine = SAEngine(macros, nets, (x_min, x_max), (y_min, y_max))
+    sa_engine.run()
+    sa_engine.update_macro_positions()
 
     return
 
