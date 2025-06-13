@@ -1,5 +1,6 @@
 from parser import parse_nodes, parse_pl, parse_nets, parse_scl
 from sa_engine import SAEngine
+from utils import output_macros
 
 
 def main(bench):
@@ -54,6 +55,12 @@ def main(bench):
     sa_engine = SAEngine(macros, nets, (x_min, x_max), (y_min, y_max))
     sa_engine.run()
     sa_engine.update_macro_positions()
+
+    # Output the final macro positions
+    output_file = os.path.join(bench, "final_placement.pl")
+    out_macros = [macro for macro in macros.values()]
+    output_macros(out_macros, output_file)
+    print(f"Final placement written to {output_file}")
 
     return
 

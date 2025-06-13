@@ -77,6 +77,8 @@ class OrientEngine():
         # res = scipy.optimize.newton(f, self.rot_vec, full_output=True, tol=10, )
         try:
             res = scipy.optimize.broyden2(f, self.rot_vec, iter=200, f_tol=1)
+            # res = scipy.optimize.newton(f, self.rot_vec)
+            # res = scipy.optimize.fsolve(f, self.rot_vec, xtol=1, maxfev=100)
             self.rot_vec = res
             print("Optimization result:", res)
         except Exception as e:
@@ -101,6 +103,7 @@ class OrientEngine():
                 angle = 0
 
             macro.set_rotation(angle)
+            self.rot_vec[idx] = angle
 
 
 

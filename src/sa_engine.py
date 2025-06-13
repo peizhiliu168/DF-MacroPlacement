@@ -167,7 +167,8 @@ class SAEngine:
 
         res: scipy.optimize.OptimizeResult = scipy.optimize.dual_annealing(
             obj_f, 
-            bounds=[(self.min_x, self.max_x), (self.min_y, self.max_y)] * len(self.macros)
+            bounds=[(self.min_x, self.max_x), (self.min_y, self.max_y)] * len(self.macros),
+            maxiter=100,
         )
 
         self.pos_vec = res.x
